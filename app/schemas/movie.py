@@ -9,19 +9,20 @@ class ScrapeMethod(str, Enum):
     UI = "ui"
 
 class MovieData(BaseModel):
-    title: str = Field(min_length=2, max_length=64)
-    original_title: Optional[str] = Field(min_length=2, max_length=64)
+    title: str
+    original_title: Optional[str] = Field(default=None)
     year: Optional[int] = Field(ge=1895, le=2050)
     url: HttpUrl
-    rating: Optional[float] = Field(ge=0, le=10)
-    votes: Optional[int]
+    slogan: Optional[str] = Field(default=None)
+    rating_imdb: Optional[float] = Field(default=None, ge=0, le=10)
+    
     genres: List[str] = Field(default=[])
     countries: List[str] = Field(default=[])
-    director: Optional[str]
-    description: Optional[str]
+    duration: Optional[str] = Field(default=None)
+    description: Optional[str] = Field(default=None)
     
 class ScrapeResponse(BaseModel):
     data: MovieData
     method: ScrapeMethod
-    status: str = Field()
+    status: str
     scraped_at: datetime = Field(default_factory=datetime.now)
