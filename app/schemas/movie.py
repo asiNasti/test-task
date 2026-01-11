@@ -18,7 +18,6 @@ class MovieData(BaseModel):
     
     genres: List[str] = Field(default=[])
     countries: List[str] = Field(default=[])
-    duration: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None)
     
 class ScrapeResponse(BaseModel):
