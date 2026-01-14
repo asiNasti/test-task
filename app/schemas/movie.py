@@ -8,6 +8,10 @@ class ScrapeMethod(str, Enum):
     HEADLESS = "headless"
     UI = "ui"
 
+class MovieResponse(BaseModel):
+    title: str
+    url: HttpUrl
+
 class MovieData(BaseModel):
     title: str
     original_title: Optional[str] = Field(default=None)
