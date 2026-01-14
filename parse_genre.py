@@ -23,7 +23,7 @@ def get_data(soup: BeautifulSoup):
     return films_data
 
 
-async def get_film_data(genre_id):
+async def get_films(genre_id):
     url = "https://ua.kinorium.com/R2D2/?order=rating&page=1&perpage=200"
     genre_url = create_new_url(url, genre_id)
     print(f"Loading: {genre_url}")
@@ -55,4 +55,4 @@ if __name__ == "__main__":
     import asyncio
     url = "https://ua.kinorium.com/R2D2/?order=rating&page=1&perpage=50"
     genre = 1
-    asyncio.run(get_film_data(genre))
+    asyncio.run(get_films(genre))
