@@ -1,6 +1,7 @@
 import logging
 from typing import List
 from fastapi import APIRouter, HTTPException, Query
+from fastapi_cache.decorator import cache
 
 from app.constants import GENRES
 from app.schemas.movie import MoviesList, MovieData
@@ -16,6 +17,7 @@ router = APIRouter()
 genres = GENRES
 
 @router.get("/genre/{genre_name}", response_model=List[MoviesList])
+@cache(expire=3600)
 async def get_movies_by_genre(genre_name: str):
     genre_form = genre_name.lower().capitalize()
 
@@ -49,6 +51,7 @@ async def get_movies_by_genre(genre_name: str):
     return movies
 
 @router.get("/movie_details/", response_model=MovieData)
+@cache(expire=3600)
 async def get_movie_details(title: str = Query(min_length=1)):
     logger.info(f"Searching details for movie: {title}")
 

@@ -14,7 +14,7 @@ async def run_playwright(url: str, headless: bool = True, wait_selector: str = N
             await page.goto(url, wait_until="domcontentloaded")
 
             if "/search/" in page.url:
-                await page.wait_for_selector(".search-page__title-link", timeout=5000)
+                
                 link = await get_film_link(page)
                 await page.goto(link, wait_until="networkidle")
                 
