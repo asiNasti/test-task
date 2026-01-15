@@ -1,7 +1,9 @@
 import asyncio
+import logging
 from playwright.async_api import async_playwright
 from app.core.config import settings
 
+logger = logging.getLogger("uvicorn.error")
 
 async def run_playwright(url: str, headless: bool = True, wait_selector: str = None):
     async with async_playwright() as p:
@@ -15,6 +17,7 @@ async def run_playwright(url: str, headless: bool = True, wait_selector: str = N
                 await page.wait_for_selector(".search-page__title-link", timeout=5000)
                 link = await get_film_link(page)
                 await page.goto(link, wait_until="networkidle")
+                
 
             if wait_selector:
                 await page.wait_for_selector(wait_selector, timeout=settings.default_timeout)
@@ -28,20 +31,19 @@ async def run_playwright(url: str, headless: bool = True, wait_selector: str = N
             return content, final_url
         
         except Exception as e:
-            print(f"Scraping error: {e}")
-            return None, url
+            logger.warning(f"Search interaction failed or timed out: {e}")
+            return None, page.url
         finally:
             await browser.close()
 
 
 async def get_film_link(page):
-    try:
-        first_movie_locator = page.locator(".movieList .item a.search-page__title-link").first
-        movie_id_path = await first_movie_locator.get_attribute("href")
-        if movie_id_path:
-            return f"{settings.kinorium_base_url}{movie_id_path}"
-        
-    except Exception:
+    movie_locator = page.locator(".movieList .item")
+    if await movie_locator.count() == 0:
         return None
     
-    return None
+    first_movie_locator = movie_locator.locator("a.search-page__title-link").first
+    movie_id_path = await first_movie_locator.get_attribute("href")
+    if movie_id_path:
+        return f"{settings.kinorium_base_url}{movie_id_path}"
+    
