@@ -1,15 +1,13 @@
 from pydantic import BaseModel, Field, HttpUrl
 from typing import Optional, List
-from datetime import datetime
-from enum import Enum
 
-class ScrapeMethod(str, Enum):
-    HTTP = "http"
-    HEADLESS = "headless"
-    UI = "ui"
+
+class MoviesList(BaseModel):
+    title: str
+    url: HttpUrl
 
 class MovieData(BaseModel):
-    title: str
+    title: str = Field(default=None)
     original_title: Optional[str] = Field(default=None)
     year: Optional[int] = Field(ge=1895, le=2050)
     url: HttpUrl
@@ -20,8 +18,3 @@ class MovieData(BaseModel):
     countries: List[str] = Field(default=[])
     description: Optional[str] = Field(default=None)
     
-class ScrapeResponse(BaseModel):
-    data: MovieData
-    method: ScrapeMethod
-    status: str
-    scraped_at: datetime = Field(default_factory=datetime.now)
