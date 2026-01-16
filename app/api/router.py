@@ -16,8 +16,14 @@ router = APIRouter()
 
 genres = GENRES
 
+@router.get("/")
+async def root():
+    return {
+        "details": "path not implemented. Visit /docs"
+    }
+
 @router.get("/genre/{genre_name}", response_model=List[MoviesList])
-@cache(expire=3600)
+@cache(expire=settings.cache_expire)
 async def get_movies_by_genre(genre_name: str):
     genre_form = genre_name.lower().capitalize()
 
@@ -51,10 +57,8 @@ async def get_movies_by_genre(genre_name: str):
     return movies
 
 @router.get("/movie_details/", response_model=MovieData)
-@cache(expire=3600)
+@cache(expire=settings.cache_expire)
 async def get_movie_details(title: str = Query(min_length=1)):
-    logger.info(f"Searching details for movie: {title}")
-
     search_url = f"{settings.kinorium_base_url}/search/?q={title}"
     content, film_url = await run_playwright(
         url=search_url,
@@ -73,8 +77,6 @@ async def get_movie_details(title: str = Query(min_length=1)):
 
 @router.get("/open_movie/")
 async def get_movie_page(title: str = Query(min_length=1)):
-    logger.info(f"Searching movie: {title}")
-
     search_url = f"{settings.kinorium_base_url}/search/?q={title}"
     content, film_url = await run_playwright(
         url=search_url,
